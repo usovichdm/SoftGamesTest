@@ -1,0 +1,21 @@
+{
+    "name": "SoftGames.AceOfShadows",
+    "rootNamespace": "SoftGames.Gameplay.AceOfShadows",
+    "references": [
+        "SoftGames.Core",
+        "SoftGames.Animation",
+        "SoftGames.UI",
+        "UnityEngine.UI",
+        "Unity.TextMeshPro",
+        "UniTask"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

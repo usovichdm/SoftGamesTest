@@ -1,0 +1,21 @@
+{
+    "name": "SoftGames.MagicWords",
+    "rootNamespace": "SoftGames.Gameplay.MagicWords",
+    "references": [
+        "SoftGames.Core",
+        "SoftGames.Networking",
+        "SoftGames.UI",
+        "UnityEngine.UI",
+        "Unity.TextMeshPro",
+        "UniTask"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

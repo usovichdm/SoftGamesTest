@@ -1,0 +1,27 @@
+{
+    "name": "SoftGames.Tests.EditMode",
+    "rootNamespace": "SoftGames.Tests",
+    "references": [
+        "SoftGames.Core",
+        "SoftGames.Networking",
+        "SoftGames.AceOfShadows",
+        "SoftGames.MagicWords",
+        "SoftGames.PhoenixFlame"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false,
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}
