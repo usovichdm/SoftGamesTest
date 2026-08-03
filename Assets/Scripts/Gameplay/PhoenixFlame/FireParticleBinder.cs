@@ -5,9 +5,18 @@ namespace SoftGames.Gameplay.PhoenixFlame
 {
     /// <summary>
     /// Applies animated fire RGB channels to particle layers every frame.
+    /// Reuses gradient buffers to avoid GC during Animator blends.
     /// </summary>
     public sealed class FireParticleBinder : MonoBehaviour
     {
+        private static readonly GradientAlphaKey[] SharedAlphaKeys =
+        {
+            new GradientAlphaKey(0f, 0f),
+            new GradientAlphaKey(0.95f, 0.15f),
+            new GradientAlphaKey(0.55f, 0.7f),
+            new GradientAlphaKey(0f, 1f)
+        };
+
         [SerializeField]
         private FireColorChannels _channels;
 
@@ -16,6 +25,14 @@ namespace SoftGames.Gameplay.PhoenixFlame
 
         [SerializeField]
         private ParticleSystem[] _extraLayers;
+
+        private readonly Gradient _gradient = new Gradient();
+        private readonly GradientColorKey[] _colorKeys =
+        {
+            new GradientColorKey(Color.white, 0f),
+            new GradientColorKey(Color.white, 0.35f),
+            new GradientColorKey(Color.white, 1f)
+        };
 
         private Color _last = new Color(-1f, -1f, -1f, 1f);
 
@@ -69,7 +86,7 @@ namespace SoftGames.Gameplay.PhoenixFlame
                    && Mathf.Abs(a.b - b.b) < 0.002f;
         }
 
-        private static void ApplyColor(ParticleSystem system, Color color)
+        private void ApplyColor(ParticleSystem system, Color color)
         {
             var main = system.main;
             main.startColor = color;
@@ -80,22 +97,12 @@ namespace SoftGames.Gameplay.PhoenixFlame
                 return;
             }
 
-            var gradient = new Gradient();
-            gradient.SetKeys(
-                new[]
-                {
-                    new GradientColorKey(Color.Lerp(color, Color.white, 0.35f), 0f),
-                    new GradientColorKey(color, 0.35f),
-                    new GradientColorKey(Color.Lerp(color, Color.black, 0.55f), 1f)
-                },
-                new[]
-                {
-                    new GradientAlphaKey(0f, 0f),
-                    new GradientAlphaKey(0.95f, 0.15f),
-                    new GradientAlphaKey(0.55f, 0.7f),
-                    new GradientAlphaKey(0f, 1f)
-                });
-            colorOverLifetime.color = gradient;
+            _colorKeys[0] = new GradientColorKey(Color.Lerp(color, Color.white, 0.35f), 0f);
+            _colorKeys[1] = new GradientColorKey(color, 0.35f);
+            _colorKeys[2] = new GradientColorKey(Color.Lerp(color, Color.black, 0.55f), 1f);
+
+            _gradient.SetKeys(_colorKeys, SharedAlphaKeys);
+            colorOverLifetime.color = _gradient;
         }
     }
 }

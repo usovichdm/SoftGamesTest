@@ -45,7 +45,17 @@ namespace SoftGames.Gameplay.AceOfShadows
             Apply();
         }
 
-        private void LateUpdate()
+        private void OnRectTransformDimensionsChange()
+        {
+            if (!isActiveAndEnabled)
+            {
+                return;
+            }
+
+            ApplyIfChanged();
+        }
+
+        private void ApplyIfChanged()
         {
             var parent = _pilesRoot.parent as RectTransform;
             var parentSize = parent != null ? parent.rect.size : Vector2.zero;

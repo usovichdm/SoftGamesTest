@@ -5,6 +5,7 @@ namespace SoftGames.UI
 {
     /// <summary>
     /// Applies CanvasScaler defaults and safe-area padding for mobile notches.
+    /// Reacts to size/safe-area changes without polling every frame.
     /// </summary>
     [RequireComponent(typeof(Canvas))]
     public sealed class ResponsiveCanvas : MonoBehaviour
@@ -34,17 +35,40 @@ namespace SoftGames.UI
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
             scaler.matchWidthOrHeight = _matchWidthOrHeight;
 
+            // Stable pacing on desktop/WebGL; mobile may still vsync to display.
+            Application.targetFrameRate = 60;
+
             ApplySafeArea();
         }
 
-        private void Update()
+        private void OnRectTransformDimensionsChange()
         {
-            if (_lastSafeArea != Screen.safeArea
-                || _lastScreen.x != Screen.width
-                || _lastScreen.y != Screen.height)
+            if (!isActiveAndEnabled)
             {
-                ApplySafeArea();
+                return;
             }
+
+            ApplySafeAreaIfChanged();
+        }
+
+        private void OnApplicationFocus(bool hasFocus)
+        {
+            if (hasFocus)
+            {
+                ApplySafeAreaIfChanged();
+            }
+        }
+
+        private void ApplySafeAreaIfChanged()
+        {
+            if (_lastSafeArea == Screen.safeArea
+                && _lastScreen.x == Screen.width
+                && _lastScreen.y == Screen.height)
+            {
+                return;
+            }
+
+            ApplySafeArea();
         }
 
         private void ApplySafeArea()

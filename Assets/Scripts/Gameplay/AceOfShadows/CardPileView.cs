@@ -6,6 +6,7 @@ namespace SoftGames.Gameplay.AceOfShadows
 {
     /// <summary>
     /// Presentation for one pile: overlapping layout + count label.
+    /// StackRoot children are assumed to be cards only.
     /// </summary>
     public sealed class CardPileView : MonoBehaviour
     {
@@ -51,16 +52,16 @@ namespace SoftGames.Gameplay.AceOfShadows
         public void AttachCard(CardView card, bool snapLayout)
         {
             card.transform.SetParent(_stackRoot, true);
+            var slot = Mathf.Max(0, _stackRoot.childCount - 1);
+            ApplySlot(card, slot, snapLayout);
+        }
 
-            var cardCount = CountCards();
-            card.SetSortingOrder(cardCount - 1);
-
-            if (snapLayout)
-            {
-                card.Rect.anchoredPosition = _overlapOffset * (cardCount - 1);
-                card.Rect.localScale = Vector3.one;
-                card.Rect.localRotation = Quaternion.identity;
-            }
+        public void AttachAtSlot(CardView card, int landingSlot, bool snapLayout)
+        {
+            card.transform.SetParent(_stackRoot, true);
+            var sibling = Mathf.Clamp(landingSlot, 0, _stackRoot.childCount - 1);
+            card.transform.SetSiblingIndex(sibling);
+            ApplySlot(card, landingSlot, snapLayout);
         }
 
         public void RefreshCount(int count)
@@ -71,35 +72,37 @@ namespace SoftGames.Gameplay.AceOfShadows
 
         public void Relayout()
         {
-            var slot = 0;
             for (var i = 0; i < _stackRoot.childCount; i++)
             {
                 var child = _stackRoot.GetChild(i) as RectTransform;
-                if (child == null || child.GetComponent<CardView>() == null)
+                if (child == null)
                 {
                     continue;
                 }
 
-                child.anchoredPosition = _overlapOffset * slot;
+                child.anchoredPosition = _overlapOffset * i;
                 child.localScale = Vector3.one;
                 child.localRotation = Quaternion.identity;
-                child.SetSiblingIndex(slot);
-                slot++;
+
+                if (child.TryGetComponent(out CardView card))
+                {
+                    card.SetSortingOrder(i);
+                }
             }
         }
 
-        private int CountCards()
+        private void ApplySlot(CardView card, int slot, bool snapLayout)
         {
-            var count = 0;
-            for (var i = 0; i < _stackRoot.childCount; i++)
+            card.SetSortingOrder(slot);
+
+            if (!snapLayout)
             {
-                if (_stackRoot.GetChild(i).GetComponent<CardView>() != null)
-                {
-                    count++;
-                }
+                return;
             }
 
-            return count;
+            card.Rect.anchoredPosition = _overlapOffset * slot;
+            card.Rect.localScale = Vector3.one;
+            card.Rect.localRotation = Quaternion.identity;
         }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace SoftGames.Gameplay.AceOfShadows
 {
@@ -7,6 +8,7 @@ namespace SoftGames.Gameplay.AceOfShadows
     /// Only the current top card of a pile can leave; arrival is committed when the tween ends
     /// so in-flight cards are never treated as another pile's top. Piles with a pending landing
     /// are not used as sources (avoids dealing a card out from under an arriving one).
+    /// Landing slots are reserved at plan time so out-of-order completions keep stack order.
     /// </summary>
     public sealed class CardMoveScheduler
     {
@@ -15,6 +17,7 @@ namespace SoftGames.Gameplay.AceOfShadows
         private readonly CardPile[] _piles;
         private readonly Random _random;
         private readonly int[] _pendingArrivals;
+        private readonly Dictionary<int, int> _slotByCardId;
 
         private int _activeAnimations;
 
@@ -37,7 +40,30 @@ namespace SoftGames.Gameplay.AceOfShadows
             }
 
             _pendingArrivals = new int[_piles.Length];
+            _slotByCardId = new Dictionary<int, int>(144);
             _random = seed.HasValue ? new Random(seed.Value) : new Random();
+
+            RegisterInitialSlots();
+        }
+
+        public int GetPendingArrivals(int pileId)
+        {
+            if (pileId < 0 || pileId >= _pendingArrivals.Length)
+            {
+                return 0;
+            }
+
+            return _pendingArrivals[pileId];
+        }
+
+        public int GetVisibleCount(int pileId)
+        {
+            if (pileId < 0 || pileId >= _piles.Length)
+            {
+                return 0;
+            }
+
+            return _piles[pileId].Count + _pendingArrivals[pileId];
         }
 
         public bool TryPlanMove(out int sourcePileId, out int targetPileId, out int cardId, out int landingSlot)
@@ -63,9 +89,12 @@ namespace SoftGames.Gameplay.AceOfShadows
                 return false;
             }
 
-            // Reserve the visual/domain slot now; Push happens on animation complete.
+            _slotByCardId.Remove(cardId);
+
+            // Reserve the visual/domain slot now; commit happens on animation complete.
             landingSlot = target.Count + _pendingArrivals[target.Id];
             _pendingArrivals[target.Id]++;
+            _slotByCardId[cardId] = landingSlot;
 
             sourcePileId = source.Id;
             targetPileId = target.Id;
@@ -76,7 +105,13 @@ namespace SoftGames.Gameplay.AceOfShadows
         {
             if (sourcePileId >= 0 && sourcePileId < _piles.Length)
             {
-                _piles[sourcePileId].Push(cardId);
+                var source = _piles[sourcePileId];
+                source.Push(cardId);
+                _slotByCardId[cardId] = source.Count - 1;
+            }
+            else
+            {
+                _slotByCardId.Remove(cardId);
             }
 
             if (targetPileId >= 0 && targetPileId < _pendingArrivals.Length && _pendingArrivals[targetPileId] > 0)
@@ -90,11 +125,15 @@ namespace SoftGames.Gameplay.AceOfShadows
             _activeAnimations++;
         }
 
-        public void NotifyMoveCompleted(int targetPileId, int cardId)
+        public void NotifyMoveCompleted(int targetPileId, int cardId, int landingSlot)
         {
             if (targetPileId >= 0 && targetPileId < _piles.Length)
             {
-                _piles[targetPileId].Push(cardId);
+                var pile = _piles[targetPileId];
+                var insertAt = CountCardsWithLowerSlot(pile, landingSlot);
+                pile.Insert(insertAt, cardId);
+                _slotByCardId[cardId] = landingSlot;
+
                 if (_pendingArrivals[targetPileId] > 0)
                 {
                     _pendingArrivals[targetPileId]--;
@@ -112,6 +151,32 @@ namespace SoftGames.Gameplay.AceOfShadows
         {
             CancelPlannedMove(sourcePileId, targetPileId, cardId);
             ReleaseAnimationSlot();
+        }
+
+        private void RegisterInitialSlots()
+        {
+            for (var p = 0; p < _piles.Length; p++)
+            {
+                var pile = _piles[p];
+                for (var i = 0; i < pile.Cards.Count; i++)
+                {
+                    _slotByCardId[pile.Cards[i]] = i;
+                }
+            }
+        }
+
+        private int CountCardsWithLowerSlot(CardPile pile, int landingSlot)
+        {
+            var insertAt = 0;
+            for (var i = 0; i < pile.Count; i++)
+            {
+                if (_slotByCardId.TryGetValue(pile.Cards[i], out var otherSlot) && otherSlot < landingSlot)
+                {
+                    insertAt++;
+                }
+            }
+
+            return insertAt;
         }
 
         private void ReleaseAnimationSlot()

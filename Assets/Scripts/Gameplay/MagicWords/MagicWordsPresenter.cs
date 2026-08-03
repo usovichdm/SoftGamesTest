@@ -12,7 +12,8 @@ using UnityEngine.UI;
 namespace SoftGames.Gameplay.MagicWords
 {
     /// <summary>
-    /// Loads Magic Words data, parses emoji tokens, and binds the scroll list.
+    /// Loads Magic Words data and binds the scroll list. Domain resolution lives in
+    /// <see cref="DialogueResolver"/>.
     /// </summary>
     public sealed class MagicWordsPresenter : MonoBehaviour
     {
@@ -48,7 +49,7 @@ namespace SoftGames.Gameplay.MagicWords
         private HttpJsonClient _http;
         private MagicWordsApiClient _api;
         private TextureDownloader _textures;
-        private EmojiParser _parser;
+        private DialogueResolver _resolver;
         private LoadingController _loading;
         private CancellationTokenSource _loadCts;
 
@@ -67,7 +68,7 @@ namespace SoftGames.Gameplay.MagicWords
             _http = new HttpJsonClient();
             _api = new MagicWordsApiClient(_http, _endpoint);
             _textures = new TextureDownloader();
-            _parser = new EmojiParser();
+            _resolver = new DialogueResolver();
         }
 
         private void Start()
@@ -113,7 +114,7 @@ namespace SoftGames.Gameplay.MagicWords
                     return;
                 }
 
-                var lines = BuildLines(result.Value);
+                var lines = _resolver.BuildLines(result.Value);
                 if (lines.Count == 0)
                 {
                     ShowError("No dialogue lines available.");
@@ -133,93 +134,6 @@ namespace SoftGames.Gameplay.MagicWords
                     ShowError($"Unexpected error.\n{ex.Message}");
                 }
             }
-        }
-
-        private List<ResolvedDialogueLine> BuildLines(MagicWordsResponse response)
-        {
-            var avatars = BuildAvatarMap(response.avatars);
-            var source = response.dialogue ?? Array.Empty<DialogueEntry>();
-            var lines = new List<ResolvedDialogueLine>(source.Length);
-
-            for (var i = 0; i < source.Length; i++)
-            {
-                var entry = source[i];
-                if (entry == null)
-                {
-                    continue;
-                }
-
-                var speaker = string.IsNullOrWhiteSpace(entry.name) ? "Unknown" : entry.name.Trim();
-                avatars.TryGetValue(speaker, out var avatar);
-
-                var message = new DialogueMessage(entry.text);
-                var tokens = _parser.Parse(message);
-
-                lines.Add(new ResolvedDialogueLine
-                {
-                    Speaker = speaker,
-                    Message = message,
-                    Tokens = tokens,
-                    Avatar = avatar,
-                    Side = avatar != null ? avatar.Side : AvatarSide.Left
-                });
-            }
-
-            return lines;
-        }
-
-        private static Dictionary<string, ResolvedAvatar> BuildAvatarMap(AvatarEntry[] entries)
-        {
-            var map = new Dictionary<string, ResolvedAvatar>(8);
-            if (entries == null)
-            {
-                return map;
-            }
-
-            for (var i = 0; i < entries.Length; i++)
-            {
-                var entry = entries[i];
-                if (entry == null || string.IsNullOrWhiteSpace(entry.name))
-                {
-                    continue;
-                }
-
-                var name = entry.name.Trim();
-                var url = entry.url != null ? entry.url.Trim() : string.Empty;
-                var side = ParseSide(entry.position);
-
-                if (map.TryGetValue(name, out var existing))
-                {
-                    if (string.IsNullOrEmpty(existing.Url) && !string.IsNullOrEmpty(url))
-                    {
-                        existing.Url = url;
-                        existing.Side = side;
-                    }
-
-                    continue;
-                }
-
-                map[name] = new ResolvedAvatar
-                {
-                    Name = name,
-                    Url = url,
-                    Side = side
-                };
-            }
-
-            return map;
-        }
-
-        private static AvatarSide ParseSide(string position)
-        {
-            if (string.IsNullOrWhiteSpace(position))
-            {
-                return AvatarSide.Left;
-            }
-
-            return position.Trim().Equals("right", StringComparison.OrdinalIgnoreCase)
-                ? AvatarSide.Right
-                : AvatarSide.Left;
         }
 
         private async UniTask BindLinesAsync(
@@ -296,7 +210,6 @@ namespace SoftGames.Gameplay.MagicWords
                     continue;
                 }
 
-                // Release sprites before destroying textures (Destroy is end-of-frame).
                 if (line.Avatar != null)
                 {
                     line.Avatar.ReleaseResources();
@@ -344,7 +257,6 @@ namespace SoftGames.Gameplay.MagicWords
                 return "Failed to load dialogue.\nPlease try again.";
             }
 
-            // HttpJsonClient already returns user-facing copy for common cases.
             if (technical.IndexOf('\n') >= 0)
             {
                 return technical;

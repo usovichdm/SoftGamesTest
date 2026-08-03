@@ -37,5 +37,28 @@ namespace SoftGames.Tests.EditMode
             Assert.AreEqual(-1, cardId);
             Assert.IsTrue(pile.IsEmpty);
         }
+
+        [Test]
+        public void Insert_AtIndex_KeepsOrder()
+        {
+            var pile = new CardPile(0);
+            pile.Push(20);
+            pile.Insert(0, 10);
+            pile.Insert(2, 30);
+
+            Assert.AreEqual(3, pile.Count);
+            Assert.AreEqual(10, pile.Cards[0]);
+            Assert.AreEqual(20, pile.Cards[1]);
+            Assert.AreEqual(30, pile.Cards[2]);
+            Assert.AreEqual(30, pile.Peek());
+        }
+
+        [Test]
+        public void Insert_OutOfRange_Throws()
+        {
+            var pile = new CardPile(0);
+            Assert.Throws<System.ArgumentOutOfRangeException>(() => pile.Insert(-1, 1));
+            Assert.Throws<System.ArgumentOutOfRangeException>(() => pile.Insert(1, 1));
+        }
     }
 }

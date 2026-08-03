@@ -12,6 +12,7 @@ namespace SoftGames.Gameplay.AceOfShadows
 {
     /// <summary>
     /// Spawns 144 cards into piles and drives the 1s move / 2s tween loop.
+    /// Card views come from <see cref="CardViewPool"/> so deal / scene churn avoids Instantiate spikes.
     /// </summary>
     public sealed class AceOfShadowsController : MonoBehaviour
     {
@@ -45,6 +46,7 @@ namespace SoftGames.Gameplay.AceOfShadows
 
         private CardPile[] _piles;
         private CardMoveScheduler _scheduler;
+        private CardViewPool _cardPool;
         private CancellationTokenSource _loopCts;
 
         private void Awake()
@@ -53,18 +55,65 @@ namespace SoftGames.Gameplay.AceOfShadows
 
             _title.text = "Ace of Shadows";
             _title.color = AppColors.TextPrimary;
+
+            EnsureFlightLayer();
+            ConfigureFlightLayer();
+
+            var poolGo = new GameObject("CardPool", typeof(RectTransform));
+            var poolRoot = (RectTransform)poolGo.transform;
+            poolRoot.SetParent(transform, false);
+            poolGo.SetActive(false);
+            _cardPool = new CardViewPool(_cardPrefab, poolRoot, TotalCards, TotalCards);
         }
 
         private void Start()
         {
             BuildDomain();
-            EnsureFlightLayer();
+            _flightLayer.SetAsLastSibling();
             SpawnCards();
             RefreshAllCounts();
 
             _scheduler.BecameIdle += OnBecameIdle;
             _loopCts = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
             MoveLoopAsync(_loopCts.Token).Forget();
+        }
+
+        private void EnsureFlightLayer()
+        {
+            if (_flightLayer != null)
+            {
+                return;
+            }
+
+            var parent = transform.Find("SafeArea") as RectTransform;
+            if (parent == null)
+            {
+                parent = transform as RectTransform;
+            }
+
+            var go = new GameObject("FlightLayer", typeof(RectTransform));
+            _flightLayer = (RectTransform)go.transform;
+            _flightLayer.SetParent(parent != null ? parent : transform, false);
+            _flightLayer.anchorMin = Vector2.zero;
+            _flightLayer.anchorMax = Vector2.one;
+            _flightLayer.offsetMin = Vector2.zero;
+            _flightLayer.offsetMax = Vector2.zero;
+            _flightLayer.pivot = new Vector2(0.5f, 0.5f);
+        }
+
+        /// <summary>
+        /// Nested canvas so in-flight cards dirty only this layer, not all 144 pile cards.
+        /// </summary>
+        private void ConfigureFlightLayer()
+        {
+            var canvas = _flightLayer.GetComponent<Canvas>();
+            if (canvas == null)
+            {
+                canvas = _flightLayer.gameObject.AddComponent<Canvas>();
+            }
+
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 100;
         }
 
         private void OnDestroy()
@@ -80,6 +129,11 @@ namespace SoftGames.Gameplay.AceOfShadows
                 _loopCts.Dispose();
                 _loopCts = null;
             }
+
+            // Hierarchy is already unloading — clear refs only; do not Destroy pooled cards.
+            _cardsById.Clear();
+            _cardPool?.Dispose(destroyInstances: false);
+            _cardPool = null;
         }
 
         private void BuildDomain()
@@ -109,7 +163,7 @@ namespace SoftGames.Gameplay.AceOfShadows
                 for (var i = 0; i < pile.Cards.Count; i++)
                 {
                     var cardId = pile.Cards[i];
-                    var card = Instantiate(_cardPrefab, view.StackRoot);
+                    var card = _cardPool.Rent(view.StackRoot);
                     card.Bind(cardId);
                     view.AttachCard(card, snapLayout: true);
                     _cardsById[cardId] = card;
@@ -129,9 +183,6 @@ namespace SoftGames.Gameplay.AceOfShadows
                     {
                         await UniTask.WaitUntil(() => _scheduler.IsIdle, cancellationToken: cancellationToken);
                         movesInWave = 0;
-                        await UniTask.Delay(
-                            System.TimeSpan.FromSeconds(MoveIntervalSeconds),
-                            cancellationToken: cancellationToken);
                     }
 
                     await UniTask.Delay(
@@ -149,17 +200,16 @@ namespace SoftGames.Gameplay.AceOfShadows
                         continue;
                     }
 
-                    var sourceView = _pileViews[sourceId];
                     var targetView = _pileViews[targetId];
                     var destination = targetView.WorldPositionForSlot(landingSlot);
 
                     // Lift onto the shared flight layer so the card stays above every pile.
+                    // Top-only deals: remaining stack slots stay correct without Relayout.
                     card.transform.SetParent(_flightLayer, true);
                     card.transform.SetAsLastSibling();
-                    sourceView.Relayout();
 
-                    sourceView.RefreshCount(_piles[sourceId].Count);
-                    targetView.RefreshCount(_piles[targetId].Count);
+                    RefreshPileCount(sourceId);
+                    RefreshPileCount(targetId);
 
                     _scheduler.NotifyMoveStarted();
                     movesInWave++;
@@ -199,59 +249,36 @@ namespace SoftGames.Gameplay.AceOfShadows
 
                 if (card != null)
                 {
-                    targetView.AttachCard(card, snapLayout: false);
-                    card.Rect.anchoredPosition = targetView.OverlapOffset * landingSlot;
-                    card.Rect.localScale = Vector3.one;
-                    card.Rect.localRotation = Quaternion.identity;
-                    card.SetSortingOrder(landingSlot);
+                    targetView.AttachAtSlot(card, landingSlot, snapLayout: true);
                 }
 
-                _scheduler.NotifyMoveCompleted(targetView.PileId, cardId);
-                targetView.RefreshCount(_piles[targetView.PileId].Count);
+                _scheduler.NotifyMoveCompleted(targetView.PileId, cardId, landingSlot);
+                RefreshPileCount(targetView.PileId);
             }
             catch (System.OperationCanceledException)
             {
                 _scheduler.AbortInFlightMove(sourcePileId, targetView.PileId, cardId);
-            }
-        }
+                if (card != null)
+                {
+                    _pileViews[sourcePileId].AttachCard(card, snapLayout: true);
+                }
 
-        private void EnsureFlightLayer()
-        {
-            if (_flightLayer != null)
-            {
-                _flightLayer.SetAsLastSibling();
-                return;
+                RefreshPileCount(sourcePileId);
+                RefreshPileCount(targetView.PileId);
             }
-
-            // Fallback when the scene has not wired FlightLayer: create under Piles root
-            // (Stack -> Pile -> Piles) so flying cards stay above every pile.
-            var pilesRoot = (RectTransform)_pileViews[0].StackRoot.parent.parent;
-            var existing = pilesRoot.Find("FlightLayer") as RectTransform;
-            if (existing != null)
-            {
-                _flightLayer = existing;
-            }
-            else
-            {
-                var go = new GameObject("FlightLayer", typeof(RectTransform));
-                _flightLayer = (RectTransform)go.transform;
-                _flightLayer.SetParent(pilesRoot, false);
-                _flightLayer.anchorMin = Vector2.zero;
-                _flightLayer.anchorMax = Vector2.one;
-                _flightLayer.offsetMin = Vector2.zero;
-                _flightLayer.offsetMax = Vector2.zero;
-                _flightLayer.pivot = new Vector2(0.5f, 0.5f);
-            }
-
-            _flightLayer.SetAsLastSibling();
         }
 
         private void RefreshAllCounts()
         {
             for (var i = 0; i < _piles.Length; i++)
             {
-                _pileViews[i].RefreshCount(_piles[i].Count);
+                RefreshPileCount(i);
             }
+        }
+
+        private void RefreshPileCount(int pileId)
+        {
+            _pileViews[pileId].RefreshCount(_scheduler.GetVisibleCount(pileId));
         }
 
         private void OnBecameIdle()

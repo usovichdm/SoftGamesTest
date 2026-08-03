@@ -49,6 +49,9 @@ namespace SoftGames.Gameplay.MagicWords
         private ContentSizeFitter _rootFitter;
 
         [SerializeField]
+        private ContentSizeFitter _bubbleFitter;
+
+        [SerializeField]
         private LayoutElement _spacer;
 
         private ResolvedDialogueLine _bound;
@@ -168,9 +171,8 @@ namespace SoftGames.Gameplay.MagicWords
             _bubbleLayout.minWidth = 100f;
             _bubbleLayout.preferredWidth = -1f;
 
-            var fitter = _bubbleRoot.GetComponent<ContentSizeFitter>();
-            fitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
-            fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            _bubbleFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            _bubbleFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
             _rootFitter.horizontalFit = ContentSizeFitter.FitMode.Unconstrained;
             _rootFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;

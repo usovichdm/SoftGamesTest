@@ -57,6 +57,7 @@ Thumbs.db
 
 # Tests / local tooling
 TestResults*.xml
+unity-*.log
 InitTestScene*.unity*
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 

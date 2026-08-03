@@ -37,6 +37,19 @@ namespace SoftGames.Gameplay.AceOfShadows
             _cards.Add(cardId);
         }
 
+        /// <summary>
+        /// Inserts a card so out-of-order flight completions keep reservation order.
+        /// </summary>
+        public void Insert(int index, int cardId)
+        {
+            if (index < 0 || index > _cards.Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            _cards.Insert(index, cardId);
+        }
+
         public int Peek()
         {
             if (_cards.Count == 0)
