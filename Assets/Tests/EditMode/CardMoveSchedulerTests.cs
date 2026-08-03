@@ -125,5 +125,40 @@ namespace SoftGames.Tests.EditMode
             var scheduler = new CardMoveScheduler(new[] { new CardPile(0), new CardPile(1) }, seed: 3);
             Assert.IsFalse(scheduler.TryPlanMove(out _, out _, out _, out _));
         }
+
+        [Test]
+        public void AbortInFlightMove_RestoresSource_AndDoesNotPushTarget()
+        {
+            var a = new CardPile(0);
+            var b = new CardPile(1);
+            a.Push(1);
+            a.Push(7);
+
+            var scheduler = new CardMoveScheduler(new[] { a, b }, seed: 42);
+            var idleCount = 0;
+            scheduler.BecameIdle += () => idleCount++;
+
+            Assert.IsTrue(scheduler.TryPlanMove(out var source, out var target, out var cardId, out _));
+            scheduler.NotifyMoveStarted();
+            Assert.AreEqual(1, a.Count);
+            Assert.AreEqual(0, b.Count);
+            Assert.IsFalse(scheduler.IsIdle);
+
+            scheduler.AbortInFlightMove(source, target, cardId);
+
+            Assert.AreEqual(2, a.Count);
+            Assert.AreEqual(7, a.Peek());
+            Assert.AreEqual(0, b.Count);
+            Assert.IsTrue(scheduler.IsIdle);
+            Assert.AreEqual(1, idleCount);
+
+            // After abort, the restored top can leave again and land on the target.
+            Assert.IsTrue(scheduler.TryPlanMove(out _, out var targetAgain, out var cardAgain, out _));
+            Assert.AreEqual(7, cardAgain);
+            scheduler.NotifyMoveStarted();
+            scheduler.NotifyMoveCompleted(targetAgain, cardAgain);
+            Assert.AreEqual(1, b.Count);
+            Assert.AreEqual(7, b.Peek());
+        }
     }
 }

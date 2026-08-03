@@ -17,6 +17,7 @@ namespace SoftGames.Core
         public static readonly Color Accent = new Color(0.93f, 0.45f, 0.38f, 1f);
         public static readonly Color AccentSoft = new Color(0.95f, 0.62f, 0.48f, 1f);
         public static readonly Color Success = new Color(0.45f, 0.78f, 0.55f, 1f);
+        public static readonly Color Error = new Color(0.92f, 0.42f, 0.38f, 1f);
 
         public static readonly Color CardFace = new Color(0.97f, 0.96f, 0.93f, 1f);
         public static readonly Color CardBack = new Color(0.18f, 0.42f, 0.55f, 1f);

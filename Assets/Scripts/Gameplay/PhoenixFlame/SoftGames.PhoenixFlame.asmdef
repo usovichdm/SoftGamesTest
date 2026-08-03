@@ -3,7 +3,6 @@
     "rootNamespace": "SoftGames.Gameplay.PhoenixFlame",
     "references": [
         "SoftGames.Core",
-        "SoftGames.UI",
         "UnityEngine.UI",
         "Unity.TextMeshPro"
     ],

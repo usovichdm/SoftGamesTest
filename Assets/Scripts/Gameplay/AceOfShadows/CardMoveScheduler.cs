@@ -101,6 +101,21 @@ namespace SoftGames.Gameplay.AceOfShadows
                 }
             }
 
+            ReleaseAnimationSlot();
+        }
+
+        /// <summary>
+        /// Aborts an in-flight move after <see cref="NotifyMoveStarted"/>: restores the card
+        /// to the source pile and frees the animation slot without pushing to the target.
+        /// </summary>
+        public void AbortInFlightMove(int sourcePileId, int targetPileId, int cardId)
+        {
+            CancelPlannedMove(sourcePileId, targetPileId, cardId);
+            ReleaseAnimationSlot();
+        }
+
+        private void ReleaseAnimationSlot()
+        {
             if (_activeAnimations <= 0)
             {
                 return;

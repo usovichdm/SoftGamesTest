@@ -85,5 +85,23 @@ namespace SoftGames.Networking
                 return texture;
             }
         }
+
+        /// <summary>
+        /// Destroys cached textures and clears failure memory. Call after views that
+        /// referenced those textures have released their sprites.
+        /// </summary>
+        public void Clear()
+        {
+            foreach (var pair in _cache)
+            {
+                if (pair.Value != null)
+                {
+                    UnityEngine.Object.Destroy(pair.Value);
+                }
+            }
+
+            _cache.Clear();
+            _failed.Clear();
+        }
     }
 }

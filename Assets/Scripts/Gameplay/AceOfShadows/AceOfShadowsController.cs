@@ -38,12 +38,14 @@ namespace SoftGames.Gameplay.AceOfShadows
         [SerializeField]
         private Image _background;
 
+        [SerializeField]
+        private RectTransform _flightLayer;
+
         private readonly Dictionary<int, CardView> _cardsById = new Dictionary<int, CardView>(TotalCards);
 
         private CardPile[] _piles;
         private CardMoveScheduler _scheduler;
         private CancellationTokenSource _loopCts;
-        private RectTransform _flightLayer;
 
         private void Awake()
         {
@@ -162,7 +164,15 @@ namespace SoftGames.Gameplay.AceOfShadows
                     _scheduler.NotifyMoveStarted();
                     movesInWave++;
 
-                    FlyCardAsync(card, targetView, destination, landingSlot, cardId, cancellationToken).Forget();
+                    FlyCardAsync(
+                            card,
+                            sourceId,
+                            targetView,
+                            destination,
+                            landingSlot,
+                            cardId,
+                            cancellationToken)
+                        .Forget();
                 }
             }
             catch (System.OperationCanceledException)
@@ -172,6 +182,7 @@ namespace SoftGames.Gameplay.AceOfShadows
 
         private async UniTaskVoid FlyCardAsync(
             CardView card,
+            int sourcePileId,
             CardPileView targetView,
             Vector3 destination,
             int landingSlot,
@@ -200,14 +211,20 @@ namespace SoftGames.Gameplay.AceOfShadows
             }
             catch (System.OperationCanceledException)
             {
-                _scheduler.NotifyMoveCompleted(targetView.PileId, cardId);
+                _scheduler.AbortInFlightMove(sourcePileId, targetView.PileId, cardId);
             }
         }
 
         private void EnsureFlightLayer()
         {
-            // Stack -> Pile -> Piles. Flying cards must live under Piles (not under a single Pile),
-            // otherwise later piles paint over the card at takeoff.
+            if (_flightLayer != null)
+            {
+                _flightLayer.SetAsLastSibling();
+                return;
+            }
+
+            // Fallback when the scene has not wired FlightLayer: create under Piles root
+            // (Stack -> Pile -> Piles) so flying cards stay above every pile.
             var pilesRoot = (RectTransform)_pileViews[0].StackRoot.parent.parent;
             var existing = pilesRoot.Find("FlightLayer") as RectTransform;
             if (existing != null)

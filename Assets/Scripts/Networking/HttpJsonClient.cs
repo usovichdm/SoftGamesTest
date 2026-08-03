@@ -65,12 +65,12 @@ namespace SoftGames.Networking
                 }
                 catch (Exception ex)
                 {
-                    return HttpResult<string>.Fail($"Request failed: {ex.Message}");
+                    return HttpResult<string>.Fail(DescribeFailure(ex.Message, request));
                 }
 
                 if (request.result != UnityWebRequest.Result.Success)
                 {
-                    return HttpResult<string>.Fail($"Request failed: {request.error}");
+                    return HttpResult<string>.Fail(DescribeFailure(request.error, request));
                 }
 
                 var body = request.downloadHandler != null ? request.downloadHandler.text : null;
@@ -81,6 +81,43 @@ namespace SoftGames.Networking
 
                 return HttpResult<string>.Ok(body);
             }
+        }
+
+        private static string DescribeFailure(string detail, UnityWebRequest request)
+        {
+            if (Application.internetReachability == NetworkReachability.NotReachable)
+            {
+                return "No internet connection.";
+            }
+
+            var raw = detail ?? string.Empty;
+            if (request != null && request.result == UnityWebRequest.Result.ConnectionError)
+            {
+                if (raw.IndexOf("timed out", System.StringComparison.OrdinalIgnoreCase) >= 0
+                    || raw.IndexOf("timeout", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    return "Request timed out. Please try again.";
+                }
+
+                return "Could not reach the server. Please try again.";
+            }
+
+            if (request != null && request.responseCode >= 500)
+            {
+                return $"Server error ({request.responseCode}). Please try again.";
+            }
+
+            if (request != null && request.responseCode >= 400)
+            {
+                return $"Request failed ({request.responseCode}).";
+            }
+
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                return "Network request failed.";
+            }
+
+            return $"Network error: {raw}";
         }
     }
 }

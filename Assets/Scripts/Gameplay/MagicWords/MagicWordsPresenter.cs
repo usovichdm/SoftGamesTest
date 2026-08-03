@@ -4,6 +4,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using SoftGames.Core;
 using SoftGames.Networking;
+using SoftGames.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -34,6 +35,9 @@ namespace SoftGames.Gameplay.MagicWords
         private Button _retryButton;
 
         [SerializeField]
+        private LoadingController _loadingPrefab;
+
+        [SerializeField]
         private Image _background;
 
         [SerializeField]
@@ -45,6 +49,7 @@ namespace SoftGames.Gameplay.MagicWords
         private MagicWordsApiClient _api;
         private TextureDownloader _textures;
         private EmojiParser _parser;
+        private LoadingController _loading;
         private CancellationTokenSource _loadCts;
 
         private void Awake()
@@ -58,6 +63,7 @@ namespace SoftGames.Gameplay.MagicWords
             _retryButton.onClick.AddListener(Load);
             _retryButton.gameObject.SetActive(false);
 
+            _loading = LoadingController.Spawn(_loadingPrefab, transform);
             _http = new HttpJsonClient();
             _api = new MagicWordsApiClient(_http, _endpoint);
             _textures = new TextureDownloader();
@@ -72,14 +78,14 @@ namespace SoftGames.Gameplay.MagicWords
         private void OnDestroy()
         {
             CancelLoad();
+            ClearLines();
         }
 
         public void Load()
         {
             CancelLoad();
             ClearLines();
-            SetStatus("Loading dialogue…");
-            _retryButton.gameObject.SetActive(false);
+            ShowLoading("Loading dialogue…");
 
             _loadCts = CancellationTokenSource.CreateLinkedTokenSource(destroyCancellationToken);
             LoadAsync(_loadCts.Token).Forget();
@@ -89,6 +95,12 @@ namespace SoftGames.Gameplay.MagicWords
         {
             try
             {
+                if (Application.internetReachability == NetworkReachability.NotReachable)
+                {
+                    ShowError("No internet connection.\nCheck your network and try again.");
+                    return;
+                }
+
                 var result = await _api.FetchAsync(cancellationToken);
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -97,24 +109,29 @@ namespace SoftGames.Gameplay.MagicWords
 
                 if (!result.Success)
                 {
-                    SetStatus($"Failed to load dialogue.\n{result.Error}");
-                    _retryButton.gameObject.SetActive(true);
+                    ShowError(FormatUserError(result.Error));
                     return;
                 }
 
                 var lines = BuildLines(result.Value);
                 if (lines.Count == 0)
                 {
-                    SetStatus("No dialogue lines available.");
-                    _retryButton.gameObject.SetActive(true);
+                    ShowError("No dialogue lines available.");
                     return;
                 }
 
-                SetStatus(string.Empty);
+                ShowContent();
                 await BindLinesAsync(lines, cancellationToken);
             }
             catch (OperationCanceledException)
             {
+            }
+            catch (Exception ex)
+            {
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    ShowError($"Unexpected error.\n{ex.Message}");
+                }
             }
         }
 
@@ -273,20 +290,67 @@ namespace SoftGames.Gameplay.MagicWords
         {
             for (var i = 0; i < _spawned.Count; i++)
             {
-                if (_spawned[i] != null)
+                var line = _spawned[i];
+                if (line == null)
                 {
-                    Destroy(_spawned[i].gameObject);
+                    continue;
                 }
+
+                // Release sprites before destroying textures (Destroy is end-of-frame).
+                if (line.Avatar != null)
+                {
+                    line.Avatar.ReleaseResources();
+                }
+
+                Destroy(line.gameObject);
             }
 
             _spawned.Clear();
+            _textures?.Clear();
         }
 
-        private void SetStatus(string message)
+        private void ShowLoading(string message)
         {
-            _statusLabel.color = AppColors.TextMuted;
+            _retryButton.gameObject.SetActive(false);
+            SetStatus(string.Empty, AppColors.TextMuted);
+            _loading.Show(message);
+        }
+
+        private void ShowError(string message)
+        {
+            _loading.Hide();
+            SetStatus(message, AppColors.Error);
+            _retryButton.gameObject.SetActive(true);
+        }
+
+        private void ShowContent()
+        {
+            _loading.Hide();
+            SetStatus(string.Empty, AppColors.TextMuted);
+            _retryButton.gameObject.SetActive(false);
+        }
+
+        private void SetStatus(string message, Color color)
+        {
+            _statusLabel.color = color;
             _statusLabel.text = message ?? string.Empty;
             _statusLabel.gameObject.SetActive(!string.IsNullOrEmpty(message));
+        }
+
+        private static string FormatUserError(string technical)
+        {
+            if (string.IsNullOrWhiteSpace(technical))
+            {
+                return "Failed to load dialogue.\nPlease try again.";
+            }
+
+            // HttpJsonClient already returns user-facing copy for common cases.
+            if (technical.IndexOf('\n') >= 0)
+            {
+                return technical;
+            }
+
+            return $"Failed to load dialogue.\n{technical}";
         }
 
         private void CancelLoad()

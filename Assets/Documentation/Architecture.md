@@ -16,6 +16,7 @@
 2. Every 1s `CardMoveScheduler.TryPlanMove` pops the source top only; push to the target waits until the tween completes  
 3. `CardTween.MoveAsync` flies the matching view for 2s (concurrent UniTasks)  
 4. Waves of 8 moves pause until `ActiveAnimations == 0` → idle message  
+5. Cancelled flights call `AbortInFlightMove` (restore source, never push target)  
 
 ## Magic Words flow
 

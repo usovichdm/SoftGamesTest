@@ -26,6 +26,8 @@ namespace SoftGames.Gameplay.MagicWords
         [SerializeField]
         private Color _placeholderTint = new Color(0.22f, 0.36f, 0.38f, 1f);
 
+        private Sprite _runtimeSprite;
+
         private void Awake()
         {
             if (_image.sprite == null)
@@ -34,8 +36,15 @@ namespace SoftGames.Gameplay.MagicWords
             }
         }
 
+        private void OnDestroy()
+        {
+            ReleaseRuntimeSprite();
+        }
+
         public void ShowPlaceholder(string speakerName)
         {
+            ReleaseRuntimeSprite();
+
             _image.sprite = _placeholderSprite;
             _image.color = _placeholderTint;
             _image.enabled = true;
@@ -57,14 +66,16 @@ namespace SoftGames.Gameplay.MagicWords
                 return;
             }
 
-            var sprite = Sprite.Create(
+            ReleaseRuntimeSprite();
+
+            _runtimeSprite = Sprite.Create(
                 texture,
                 new Rect(0f, 0f, texture.width, texture.height),
                 new Vector2(0.5f, 0.5f),
                 100f);
-            sprite.name = "Avatar_" + (speakerName ?? "Unknown");
+            _runtimeSprite.name = "Avatar_" + (speakerName ?? "Unknown");
 
-            _image.sprite = sprite;
+            _image.sprite = _runtimeSprite;
             _image.color = Color.white;
             _image.enabled = true;
             _image.preserveAspect = true;
@@ -73,6 +84,29 @@ namespace SoftGames.Gameplay.MagicWords
 
             _frame.enabled = true;
             _frame.color = AppColors.AccentSoft;
+        }
+
+        /// <summary>Drops runtime sprites before textures owned by the downloader are cleared.</summary>
+        public void ReleaseResources()
+        {
+            ReleaseRuntimeSprite();
+        }
+
+        private void ReleaseRuntimeSprite()
+        {
+            if (_runtimeSprite == null)
+            {
+                return;
+            }
+
+            if (_image != null && _image.sprite == _runtimeSprite)
+            {
+                _image.sprite = _placeholderSprite;
+            }
+
+            // Immediate: ClearLines destroys downloader textures in the same call.
+            DestroyImmediate(_runtimeSprite);
+            _runtimeSprite = null;
         }
 
         private static string GetInitial(string name)

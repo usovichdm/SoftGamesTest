@@ -7,12 +7,6 @@ namespace SoftGames.Animation
     /// </summary>
     public static class EasedMotion
     {
-        public static float SmoothStep(float t)
-        {
-            t = Mathf.Clamp01(t);
-            return t * t * (3f - 2f * t);
-        }
-
         /// <summary>Ease-in-out cubic — readable arc for card flights.</summary>
         public static float EaseInOutCubic(float t)
         {

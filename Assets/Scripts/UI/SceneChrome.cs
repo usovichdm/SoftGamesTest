@@ -14,9 +14,6 @@ namespace SoftGames.UI
         private Button _menuButton;
 
         [SerializeField]
-        private FpsCounter _fpsCounter;
-
-        [SerializeField]
         private SceneLoader _sceneLoader;
 
         private void Awake()

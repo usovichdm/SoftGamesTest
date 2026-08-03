@@ -39,7 +39,6 @@ Assets/
   Scenes/
   Scripts/
     Core/                 SoftGames.Core
-    Utilities/            SoftGames.Utilities
     Animation/            SoftGames.Animation
     Networking/           SoftGames.Networking
     UI/                   SoftGames.UI
@@ -51,6 +50,7 @@ Assets/
     EditMode/             SoftGames.Tests.EditMode
     Prefabs/
       UI/SceneChrome        Menu button + FPS (shared)
+      UI/LoadingOverlay     Network loading layer
       AceOfShadows/
       MagicWords/
   Art/
@@ -76,7 +76,7 @@ Feature code is split into asmdefs so domains stay isolated and Edit Mode tests 
 
 Edit Mode tests cover domain logic without entering Play Mode:
 
-- `CardPile` / `CardMoveScheduler`
+- `CardPile` / `CardMoveScheduler` (including abort-in-flight)
 - `EmojiParser`
 - `FireColorCycle`
 - `HttpResult` (string Ok/Fail overload safety)
@@ -99,7 +99,7 @@ Unity -batchmode -nographics -quit \
 - **Async** flows use **UniTask** (`com.cysharp.unitask`) instead of coroutines
 - **MonoBehaviours** wire Unity objects to those systems
 - No DI frameworks, service locators, or giant managers
-- Cached refs, pooled-friendly views, no per-card `Update()`
+- Cached refs, no per-card `Update()`
 
 ## Opening the project
 
@@ -115,4 +115,4 @@ Unity -batchmode -nographics -quit \
 4. Build to e.g. `Builds/WebGL`  
 5. Host the folder (itch.io, GitHub Pages, S3, nginx, etc.) and share the URL
 
-> Hosted link: _add your deployment URL here after uploading the WebGL build._
+> Hosted link: https://usovichdm.github.io/SoftGamesTest/
