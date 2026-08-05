@@ -10166,7 +10166,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: be198970180954e9f8aa95a0e868ce12, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.Gameplay.PhoenixFlame.PhoenixFlameController
+  m_EditorClassIdentifier: SoftGames.PhoenixFlame::Features.PhoenixFlame.PhoenixFlameController
   _fireAnimator: {fileID: 1834074053}
   _binder: {fileID: 1834074050}
   _cycleButton: {fileID: 119618130}
@@ -10185,7 +10185,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 978153c0f82b44efa83748c1c88b7c60, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.UI.ResponsiveCanvas
+  m_EditorClassIdentifier: SoftGames.UI::Common.UI.ResponsiveCanvas
   _safeAreaRoot: {fileID: 1810047008}
   _referenceResolution: {x: 1080, y: 1920}
   _matchWidthOrHeight: 0.5
@@ -15667,7 +15667,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d47109143cb74bdb956c35da1639776, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.Gameplay.PhoenixFlame.FireParticleBinder
+  m_EditorClassIdentifier: SoftGames.PhoenixFlame::Features.PhoenixFlame.FireParticleBinder
   _channels: {fileID: 1834074052}
   _particles: {fileID: 306786577}
   _extraLayers:
@@ -15702,7 +15702,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b367d7c713b364f27ac93baf8d425f90, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.Gameplay.PhoenixFlame.FireColorChannels
+  m_EditorClassIdentifier: SoftGames.PhoenixFlame::Features.PhoenixFlame.FireColorChannels
   colorR: 1
   colorG: 0.45
   colorB: 0.12

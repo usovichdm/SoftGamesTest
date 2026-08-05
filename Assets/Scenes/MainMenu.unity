@@ -704,7 +704,6 @@ GameObject:
   - component: {fileID: 1238077398}
   - component: {fileID: 1238077397}
   - component: {fileID: 1238077396}
-  - component: {fileID: 1238077395}
   - component: {fileID: 1238077394}
   m_Layer: 0
   m_Name: MainMenuCanvas
@@ -724,8 +723,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0524013ce431a413db75c25a0c7925ce, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.UI.MainMenuController
-  _sceneLoader: {fileID: 1238077395}
+  m_EditorClassIdentifier: SoftGames.UI::Common.UI.MainMenuController
   _aceButton: {fileID: 1967069035}
   _magicButton: {fileID: 1696499120}
   _phoenixButton: {fileID: 302090372}
@@ -733,18 +731,6 @@ MonoBehaviour:
   _subtitle: {fileID: 306786577}
   _background: {fileID: 811583171}
   _accentBar: {fileID: 1822844900}
---- !u!114 &1238077395
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1238077393}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 007b5fafd7b6a4a7fb318838d7980f9e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.Core.SceneLoader
 --- !u!114 &1238077396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -756,7 +742,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 978153c0f82b44efa83748c1c88b7c60, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.UI.ResponsiveCanvas
+  m_EditorClassIdentifier: SoftGames.UI::Common.UI.ResponsiveCanvas
   _safeAreaRoot: {fileID: 1808093317}
   _referenceResolution: {x: 1080, y: 1920}
   _matchWidthOrHeight: 0.5
@@ -1582,7 +1568,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e33776bbd5018454db8cefc1f7378104, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.UI.FpsCounter
+  m_EditorClassIdentifier: SoftGames.UI::Common.UI.FpsCounter
   _label: {fileID: 1815644452}
   _refreshSeconds: 0.25
 --- !u!114 &1815644452

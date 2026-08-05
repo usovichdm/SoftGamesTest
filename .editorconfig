@@ -1,0 +1,8 @@
+root = true
+
+[*.cs]
+indent_style = tab
+indent_size = 4
+# Rider/ReSharper: namespace comes from asmdef rootNamespace, not folder path.
+dotnet_style_namespace_match_folder = false
+resharper_namespace_provider_attribute_enabled = false

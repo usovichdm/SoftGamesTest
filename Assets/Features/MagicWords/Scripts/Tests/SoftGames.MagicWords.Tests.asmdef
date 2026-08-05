@@ -1,0 +1,25 @@
+{
+    "name": "SoftGames.MagicWords.Tests",
+    "rootNamespace": "Features.MagicWords.Tests",
+    "references": [
+        "BoundfoxStudios.FluentAssertions",
+        "SoftGames.MagicWords",
+        "SoftGames.Networking"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false,
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}

@@ -726,7 +726,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 955d2e081d10f4f2284d6f0a12fa3f43, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.Gameplay.MagicWords.MagicWordsPresenter
+  m_EditorClassIdentifier: SoftGames.MagicWords::Features.MagicWords.MagicWordsPresenter
   _linePrefab: {fileID: 5304510853789216774, guid: 03746cfa43fd24a26a5565d4c54c216b, type: 3}
   _contentRoot: {fileID: 1624770689}
   _scrollRect: {fileID: 1815644454}
@@ -736,6 +736,7 @@ MonoBehaviour:
   _loadingPrefab: {fileID: 1100000006, guid: c4d8e2f01a3b4c5d6e7f8091a2b3c4d5, type: 3}
   _background: {fileID: 1822844900}
   _endpoint: https://private-624120-softgamesassignment.apiary-mock.com/v3/magicwords
+  _emojiCatalog: {fileID: 11400000, guid: f00dbcda42bb46e9b36e20eef9c22207, type: 2}
 --- !u!114 &1238077396
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -747,7 +748,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 978153c0f82b44efa83748c1c88b7c60, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.UI.ResponsiveCanvas
+  m_EditorClassIdentifier: SoftGames.UI::Common.UI.ResponsiveCanvas
   _safeAreaRoot: {fileID: 306786575}
   _referenceResolution: {x: 1080, y: 1920}
   _matchWidthOrHeight: 0.35
@@ -1233,12 +1234,12 @@ MonoBehaviour:
   m_Content: {fileID: 1624770689}
   m_Horizontal: 0
   m_Vertical: 1
-  m_MovementType: 1
+  m_MovementType: 2
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
   m_ScrollSensitivity: 1
-  m_Viewport: {fileID: 0}
+  m_Viewport: {fileID: 1815644450}
   m_HorizontalScrollbar: {fileID: 0}
   m_VerticalScrollbar: {fileID: 0}
   m_HorizontalScrollbarVisibility: 0

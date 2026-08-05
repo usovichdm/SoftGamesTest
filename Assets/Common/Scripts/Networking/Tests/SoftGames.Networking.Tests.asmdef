@@ -1,0 +1,25 @@
+{
+    "name": "SoftGames.Networking.Tests",
+    "rootNamespace": "Common.Networking.Tests",
+    "references": [
+        "BoundfoxStudios.FluentAssertions",
+        "SoftGames.Networking",
+        "UniTask"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false,
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}

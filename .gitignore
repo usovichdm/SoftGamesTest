@@ -68,3 +68,9 @@ InitTestScene*.unity*
 /[Aa]ssets/Addressables_Temp*
 /[Aa]ssets/AddressableAssetsData/*/*.bin*
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Local Cursor / Rider
+.cursor/
+*.DotSettings
+*.DotSettings.user
+/tools/

@@ -1,0 +1,24 @@
+{
+    "name": "SoftGames.AceOfShadows.Tests",
+    "rootNamespace": "Features.AceOfShadows.Tests",
+    "references": [
+        "BoundfoxStudios.FluentAssertions",
+        "SoftGames.AceOfShadows"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false,
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ]
+}

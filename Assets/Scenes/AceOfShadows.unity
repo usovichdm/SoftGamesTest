@@ -231,7 +231,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 85d185cddf9c54b60ae51747affe13c1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.Gameplay.AceOfShadows.CardPileView
+  m_EditorClassIdentifier: SoftGames.AceOfShadows::Features.AceOfShadows.CardPileView
 --- !u!1 &119618124
 GameObject:
   m_ObjectHideFlags: 0
@@ -344,7 +344,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5fa06cd19d99c42458d6554e9ee90e74, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.Gameplay.AceOfShadows.AceOfShadowsController
+  m_EditorClassIdentifier: SoftGames.AceOfShadows::Features.AceOfShadows.AceOfShadowsController
   _cardPrefab: {fileID: 819805424004831587, guid: e793752edd93f4242bf68aa2b10eec8a, type: 3}
   _pileViews:
   - {fileID: 20828018}
@@ -367,7 +367,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 07269f6f6ce2d457a8e6633409202b87, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.Animation.CardTween
+  m_EditorClassIdentifier: SoftGames.AceOfShadows::Features.AceOfShadows.CardTween
   _defaultDuration: 2
   _arcHeight: 120
 --- !u!114 &302090370
@@ -381,7 +381,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 978153c0f82b44efa83748c1c88b7c60, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.UI.ResponsiveCanvas
+  m_EditorClassIdentifier: SoftGames.UI::Common.UI.ResponsiveCanvas
   _safeAreaRoot: {fileID: 811583169}
   _referenceResolution: {x: 1080, y: 1920}
   _matchWidthOrHeight: 0.5
@@ -584,7 +584,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 85d185cddf9c54b60ae51747affe13c1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.Gameplay.AceOfShadows.CardPileView
+  m_EditorClassIdentifier: SoftGames.AceOfShadows::Features.AceOfShadows.CardPileView
 --- !u!1001 &695286736
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -701,7 +701,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 85d185cddf9c54b60ae51747affe13c1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.Gameplay.AceOfShadows.CardPileView
+  m_EditorClassIdentifier: SoftGames.AceOfShadows::Features.AceOfShadows.CardPileView
 --- !u!1 &811583168
 GameObject:
   m_ObjectHideFlags: 0
@@ -934,7 +934,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 85d185cddf9c54b60ae51747affe13c1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.Gameplay.AceOfShadows.CardPileView
+  m_EditorClassIdentifier: SoftGames.AceOfShadows::Features.AceOfShadows.CardPileView
 --- !u!1 &1696499114
 GameObject:
   m_ObjectHideFlags: 0
@@ -1013,7 +1013,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c9e1a2b3d4f5a6b7c8d9e0f1a2b3c4d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: SoftGames.AceOfShadows::SoftGames.Gameplay.AceOfShadows.AcePilesLayout
+  m_EditorClassIdentifier: SoftGames.AceOfShadows::Features.AceOfShadows.AcePilesLayout
   _pilesRoot: {fileID: 1696499115}
   _designWidth: 920
   _designHeight: 520
@@ -1304,6 +1304,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1888000002}
+  - component: {fileID: 1888000003}
   m_Layer: 0
   m_Name: FlightLayer
   m_TagString: Untagged
@@ -1330,6 +1331,29 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!223 &1888000003
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1888000001}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 0
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 1
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
+  m_SortingLayerID: 0
+  m_SortingOrder: 100
+  m_TargetDisplay: 0
 --- !u!1 &1967069029
 GameObject:
   m_ObjectHideFlags: 0
@@ -1431,7 +1455,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4c016dd7a5ec2488399496888d409435, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SoftGames.UI.ScreenMessage
+  m_EditorClassIdentifier: SoftGames.UI::Common.UI.ScreenMessage
   _group: {fileID: 1967069033}
   _label: {fileID: 1810047009}
   _fadeSeconds: 0.35

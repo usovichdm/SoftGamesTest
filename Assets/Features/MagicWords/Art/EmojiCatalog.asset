@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba8acc9c0f864f94abdd48a6deadb3b5, type: 3}
+  m_Name: EmojiCatalog
+  m_EditorClassIdentifier: SoftGames.MagicWords::Features.MagicWords.EmojiCatalogAsset
+  _entries:
+  - Key: satisfied
+    Unicode: 😌
+    AtlasId: 1f60a
+  - Key: intrigued
+    Unicode: 🤔
+    AtlasId: 1f609
+  - Key: neutral
+    Unicode: 😐
+    AtlasId: 263a
+  - Key: affirmative
+    Unicode: 👍
+    AtlasId: 1f60e
+  - Key: laughing
+    Unicode: 😂
+    AtlasId: 1f602
+  - Key: win
+    Unicode: 🏆
+    AtlasId: 1f601
+  - Key: happy
+    Unicode: 😊
+    AtlasId: 1f60a
+  - Key: sad
+    Unicode: 😢
+    AtlasId: 2639
+  - Key: angry
+    Unicode: 😠
+    AtlasId: 2639
+  - Key: love
+    Unicode: ❤️
+    AtlasId: 1f618
+  - Key: fire
+    Unicode: 🔥
+    AtlasId: 1f923
+  - Key: cool
+    Unicode: 😎
+    AtlasId: 1f60e
+  _spriteAsset: {fileID: 11400000, guid: c41005c129ba4d66911b75229fd70b45, type: 2}
