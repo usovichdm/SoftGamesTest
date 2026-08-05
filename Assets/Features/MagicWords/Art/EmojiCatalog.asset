@@ -14,39 +14,39 @@ MonoBehaviour:
   m_EditorClassIdentifier: SoftGames.MagicWords::Features.MagicWords.EmojiCatalogAsset
   _entries:
   - Key: satisfied
-    Unicode: 😌
-    AtlasId: 1f60a
+    Unicode: "😊"
+    AtlasId: Smiling face with smiling eyes
   - Key: intrigued
-    Unicode: 🤔
+    Unicode: "😉"
     AtlasId: 1f609
   - Key: neutral
-    Unicode: 😐
+    Unicode: "☺"
     AtlasId: 263a
   - Key: affirmative
-    Unicode: 👍
+    Unicode: "😎"
     AtlasId: 1f60e
   - Key: laughing
-    Unicode: 😂
-    AtlasId: 1f602
+    Unicode: "😂"
+    AtlasId: Face with tears of joy
   - Key: win
-    Unicode: 🏆
+    Unicode: "😁"
     AtlasId: 1f601
   - Key: happy
-    Unicode: 😊
-    AtlasId: 1f60a
+    Unicode: "😀"
+    AtlasId: Grinning face
   - Key: sad
-    Unicode: 😢
+    Unicode: "☹"
     AtlasId: 2639
   - Key: angry
-    Unicode: 😠
+    Unicode: "☹"
     AtlasId: 2639
   - Key: love
-    Unicode: ❤️
+    Unicode: "😘"
     AtlasId: 1f618
   - Key: fire
-    Unicode: 🔥
+    Unicode: "🤣"
     AtlasId: 1f923
   - Key: cool
-    Unicode: 😎
+    Unicode: "😎"
     AtlasId: 1f60e
   _spriteAsset: {fileID: 11400000, guid: c41005c129ba4d66911b75229fd70b45, type: 2}

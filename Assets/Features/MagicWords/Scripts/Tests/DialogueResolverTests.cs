@@ -17,8 +17,8 @@ namespace Features.MagicWords.Tests
 				new EmojiCatalogAsset.Entry
 				{
 					Key = "satisfied",
-					Unicode = "😌",
-					AtlasId = "1f60a"
+					Unicode = "😊",
+					AtlasId = "Smiling face with smiling eyes"
 				}
 			});
 		}

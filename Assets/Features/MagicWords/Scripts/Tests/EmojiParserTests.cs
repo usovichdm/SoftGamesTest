@@ -19,8 +19,8 @@ namespace Features.MagicWords.Tests
 				new EmojiCatalogAsset.Entry
 				{
 					Key = "satisfied",
-					Unicode = "😌",
-					AtlasId = "1f60a"
+					Unicode = "😊",
+					AtlasId = "Smiling face with smiling eyes"
 				}
 			});
 			_parser = new EmojiParser(_catalog);
@@ -52,8 +52,8 @@ namespace Features.MagicWords.Tests
 			tokens[1].Kind.Should().Be(DialogueTokenKind.Emoji);
 			tokens[2].Kind.Should().Be(DialogueTokenKind.Text);
 
-			tokens[1].Unicode.Should().Be("😌");
-			tokens[1].AtlasId.Should().Be("1f60a");
+			tokens[1].Unicode.Should().Be("😊");
+			tokens[1].AtlasId.Should().Be("Smiling face with smiling eyes");
 		}
 
 		[Test]
